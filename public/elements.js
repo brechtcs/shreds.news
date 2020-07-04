@@ -22,20 +22,25 @@ function choose (user) {
 
 function display (user) {
   var id = user.screen_name
-  var href = `https://twitter.com/${id}/with_replies`
   var classes = localStorage.getItem(id)
   var style = colors(user)
 
   return crel('article', { id, style, class: classes },
-    crel('a', { href, class: 'thumb' },
-      crel('img', { src: user.profile_image_url_https })
-    ),
     crel('header',
+      thumb(user),
       crel('address', user.name),
       stamp(user.status.created_at)
     ),
     content(user.status),
     crel('ul', conversation(user), spotlight(user))
+  )
+}
+
+function thumb (user) {
+  var href = `https://twitter.com/${user.screen_name}/with_replies`
+
+  return crel('a', { href, class: 'thumb' },
+    crel('img', { src: user.profile_image_url_https })
   )
 }
 

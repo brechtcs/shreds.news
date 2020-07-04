@@ -58,12 +58,14 @@ article:target {
   filter: brightness(120%);
 }
 
-article .thumb {
+article header::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+article header .thumb {
   float: left;
   margin-right: 1em;
-}
-article section {
-  margin-block-start: .5em;
 }
 article ul {
   margin-block-start: 1em;
