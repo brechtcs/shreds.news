@@ -4,16 +4,19 @@ import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
 export function json (data) {
   var formatter = new JSONFormatter(data)
-  return formatter.render()
+  return crel('main', formatter.render())
 }
 
 export function feed (data) {
   var items = data.filter(choose).map(display)
-  return crel('div', items)
+  return crel('main', items)
 }
 
 function choose (user) {
   if (user.status == null) return false
+  if (user.status.retweeted_status && !user.status.entities.user_mentions[0]) {
+    return false // Invalid retweet
+  }
   return true
 }
 
@@ -31,9 +34,22 @@ function display (user) {
       crel('address', user.name),
       stamp(user.status.created_at)
     ),
-    crel('section', user.status.full_text),
+    content(user.status),
     crel('ul', conversation(user), spotlight(user))
   )
+}
+
+function content (status) {
+  if (status.retweeted_status ) {
+    var rt = status.retweeted_status
+    var author = status.entities.user_mentions[0]
+    var href = `https://twitter.com/${author.screen_name}/status/${rt.id_str}`
+    var content = crel('span', { class: 'retweet' }, rt.full_text)
+    var link = author ? crel('a', { href, class: 'author' }, author.name) : null
+    return crel('section', content, link)
+  } else {
+    return crel('section', status.full_text)
+  }
 }
 
 function colors (user) {

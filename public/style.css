@@ -68,3 +68,10 @@ article section {
 article ul {
   margin-block-start: 1em;
 }
+
+.retweet::before {
+  content: '“';
+}
+.retweet::after {
+  content: '” · ';
+}
