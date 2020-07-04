@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "await-callback": "^1.0.1",
+    "express-session": "^1.17.1",
+    "outdent": "^0.7.1",
+    "passport": "^0.4.1",
+    "passport-twitter": "^1.0.4",
+    "polka": "^1.0.0-next.11",
+    "serve-static": "^1.14.1",
+    "session-file-store": "^1.4.0",
+    "twit": "^2.2.11"
+  },
+  "devDependencies": {}
+}

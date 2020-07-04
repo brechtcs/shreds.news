@@ -1,0 +1,88 @@
+import { DateTime } from 'https://moment.github.io/luxon/es6/luxon.js'
+import JSONFormatter from 'https://unpkg.com/json-formatter-js@2.x/dist/json-formatter.esm.js'
+import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
+
+export function json (data) {
+  var formatter = new JSONFormatter(data)
+  return formatter.render()
+}
+
+export function feed (data) {
+  var items = data.filter(choose).map(display)
+  return crel('div', items)
+}
+
+function choose (user) {
+  if (user.status == null) return false
+  return true
+}
+
+function display (user) {
+  var id = user.screen_name
+  var href = `https://twitter.com/${id}/with_replies`
+  var classes = localStorage.getItem(id)
+  var style = colors(user)
+
+  return crel('article', { id, style, class: classes },
+    crel('a', { href, class: 'thumb' },
+      crel('img', { src: user.profile_image_url_https })
+    ),
+    crel('header',
+      crel('address', user.name),
+      stamp(user.status.created_at)
+    ),
+    crel('section', user.status.full_text),
+    crel('ul', conversation(user), spotlight(user))
+  )
+}
+
+function colors (user) {
+  var style = ''
+  style += `--border-color:#${user.profile_link_color};`
+  return style
+}
+
+function spotlight (user) {
+  var href = `#${user.screen_name}`
+  var button = crel('a', { href }, 'Toggle spotlight')
+  var item = crel('li', button)
+
+  button.addEventListener('click', event => {
+    var article = window[user.screen_name]
+    article.classList.toggle('spotlight')
+    localStorage.setItem(user.screen_name, article.className)
+    event.preventDefault()
+  })
+
+  return item
+}
+
+function conversation (user) {
+  var href = `https://twitter.com/${user.screen_name}/status/${user.status.id_str}`
+  var link = crel('a', { href }, 'Open conversation')
+  return crel('li', link)
+}
+
+function hashtags (status) {
+  return status.entities.hashtags.length <= 3
+}
+
+function retweet (status) {
+  if (status.retweeted_status) {
+    var rt = status.retweeted_status
+    rt.via = status.user
+    return rt
+  }
+  return status
+}
+
+function stamp (str) {
+  var date = DateTime.fromJSDate(new Date(str))
+  var el = crel('time', date.setLocale('en').toRelative())
+
+  setInterval(() => {
+    el.innerText = date.setLocale('en').toRelative()
+  }, 60000)
+
+  return el
+}

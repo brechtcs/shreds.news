@@ -1,0 +1,70 @@
+:root {
+  --fg-color: #fafafa;
+  --bg-color: #222;
+  --border-color: #fafafa;
+  --link-color: #2fc2ef;
+}
+
+body {
+  background-color: var(--bg-color);
+  border-color: var(--border-color);
+  color: var(--fg-color);
+  padding: 2em;
+}
+
+h1 {
+  font-variant: small-caps;
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+main[type=feed] {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 3em;
+  grid-row-gap: 2em;
+}
+main[type=json] {
+  background-color: lightgray;
+  color: var(--bg-color);
+  padding: 1em;
+}
+
+article {
+  background-color: #1a1a1a;
+  border-left: .25em solid;
+  border-right: .25em solid;
+  border-color: var(--border-color);
+  color: var(--fg-color);
+  cursor: default;
+  filter: opacity(80%) grayscale(75%);
+  padding: 1em;
+  white-space: pre-wrap;
+}
+article:hover {
+  filter: opacity(90%) grayscale(0%);
+}
+article.spotlight,
+article.spotlight:hover,
+article:target {
+  background-color: black;
+  filter: brightness(120%);
+}
+
+article .thumb {
+  float: left;
+  margin-right: 1em;
+}
+article section {
+  margin-block-start: .5em;
+}
+article ul {
+  margin-block-start: 1em;
+}
