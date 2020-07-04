@@ -72,8 +72,8 @@ article ul {
 }
 
 .retweet::before {
-  content: '“';
+  content: '» ';
 }
-.retweet::after {
-  content: '” · ';
+.author + .retweet::before {
+  content: ' » ';
 }

@@ -51,7 +51,7 @@ function content (status) {
     var href = `https://twitter.com/${author.screen_name}/status/${rt.id_str}`
     var content = crel('span', { class: 'retweet' }, rt.full_text)
     var link = author ? crel('a', { href, class: 'author' }, author.name) : null
-    return crel('section', content, link)
+    return crel('section', link, content)
   } else {
     return crel('section', status.full_text)
   }
