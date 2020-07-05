@@ -44,8 +44,9 @@ body > header a {
 main[type=feed] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
-  grid-column-gap: 3em;
-  grid-row-gap: 2em;
+  grid-column-gap: 2em;
+  grid-row-gap: 3em;
+  align-items: start;
 }
 main[type=json] {
   background-color: var(--fg-color);
@@ -61,8 +62,7 @@ main[type=markdown] h1:first-child {
 
 article {
   background-color: #1a1a1a;
-  border-top: 2px solid;
-  border-bottom: 2px solid;
+  border-bottom: 2px ridge;
   border-color: var(--border-color);
   color: var(--fg-color);
   cursor: default;
@@ -91,6 +91,7 @@ article header .thumb {
 }
 
 article section {
+  flex: 1;
   padding: 0 1em;
 }
 article ul {
