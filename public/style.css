@@ -47,13 +47,12 @@ main[type=json] {
 
 article {
   background-color: #1a1a1a;
-  border-left: .25em solid;
-  border-right: .25em solid;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
   border-color: var(--border-color);
   color: var(--fg-color);
   cursor: default;
   filter: opacity(80%) grayscale(75%);
-  padding: 1em;
   white-space: pre-wrap;
 }
 article:hover {
@@ -66,6 +65,12 @@ article:target {
   filter: brightness(120%);
 }
 
+article header {
+  background-color: var(--border-color);
+  padding: 0 1em;
+  padding-block-start: 1em;
+  margin-block-end: 1em;
+}
 article header::after {
   content: '';
   display: table;
@@ -74,6 +79,9 @@ article header::after {
 article header .thumb {
   float: left;
   margin-right: 1em;
+}
+article section {
+  padding: 0 1em;
 }
 article ul {
   margin-block-start: 1em;
@@ -84,4 +92,8 @@ article ul {
 }
 .author + .retweet::before {
   content: ' » ';
+}
+
+.thumb img {
+  border-radius: 50%;
 }
