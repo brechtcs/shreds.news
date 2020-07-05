@@ -16,6 +16,10 @@ a {
   color: var(--link-color);
   text-decoration: underline;
 }
+h1 a {
+  color: inherit;
+  text-decoration: none;
+}
 
 [hidden] {
   display: none !important;
@@ -23,7 +27,7 @@ a {
 
 body > header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
 
   background-color: var(--bg-color);
   border-bottom: 1px solid;
@@ -36,9 +40,16 @@ body > header {
 body > header > *:first-child {
   flex: 1;
 }
-body > header a {
-  color: inherit;
+
+nav a {
+  background-color: var(--fg-color);
+  color: var(--bg-color);
+  padding: .5em;
   text-decoration: none;
+}
+nav a:hover {
+  background-color: var(--link-color);
+  color: var(--fg-color);
 }
 
 main[type=feed] {

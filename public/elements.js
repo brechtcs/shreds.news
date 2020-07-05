@@ -13,6 +13,10 @@ export function feed (data) {
   return crel('main', items)
 }
 
+export function link (href, text) {
+  return crel('a', { href }, text || href)
+}
+
 export function markdown (text) {
   var main = crel('main')
   main.innerHTML = marked(text)

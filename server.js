@@ -66,6 +66,14 @@ app.get('/home', async (req, res) => {
   }
 })
 
+app.get('/logout', function (req, res) {
+  req.session.destroy(err => {
+    if (err) console.error(err)
+    res.writeHead(302, { 'Location': '/' })
+    res.end()
+  })
+})
+
 app.listen(3000, () => console.log('Listening at localhost:3000'))
 
 //======
@@ -95,7 +103,7 @@ function render (type, content) {
         <script type="module" src="/app.js"></script>
       </head>
       <body>
-        <header>
+        <header is="shreds-header">
           <h1><a href="/home">Shreds</a></h1>
         </header>
         <main is="shreds-app" type="${type}" hidden>${content}</main>

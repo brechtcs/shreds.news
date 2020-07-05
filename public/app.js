@@ -1,4 +1,4 @@
-import { feed, json, markdown } from './elements.js'
+import { feed, json, link, markdown } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 import morphdom from 'https://unpkg.com/morphdom@2.x/dist/morphdom-esm.js'
 
@@ -88,3 +88,23 @@ customElements.define('shreds-app', class extends HTMLElement {
     return this.getAttribute('type')
   }
 }, { extends: 'main' })
+
+customElements.define('shreds-header', class extends HTMLElement {
+  connectedCallback () {
+    var nav = crel('nav')
+
+    switch (this.route) {
+      case '/':
+        nav.append(link('/login', 'Sign In'))
+        break
+      case '/home':
+        nav.append(link('/logout', 'Sign Out'))
+        break
+    }
+    this.append(nav)
+  }
+
+  get route () {
+    return location.pathname
+  }
+}, { extends: 'header' })
