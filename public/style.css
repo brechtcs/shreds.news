@@ -37,6 +37,7 @@ body > header > *:first-child {
   flex: 1;
 }
 body > header a {
+  color: inherit;
   text-decoration: none;
 }
 

@@ -55,10 +55,15 @@ app.get('/', (req, res, next) => {
 })
 
 app.get('/home', async (req, res) => {
-  var data = await get(req.user, 'friends/list', { count: 200 })
-  var page = render('feed', JSON.stringify(data.users))
-  res.writeHead(200, { 'Content-Type': 'text/html' })
-  res.end(page)
+  if (req.user) {
+    var data = await get(req.user, 'friends/list', { count: 200 })
+    var page = render('feed', JSON.stringify(data.users))
+    res.writeHead(200, { 'Content-Type': 'text/html' })
+    res.end(page)
+  } else {
+    res.writeHead(302, { 'Location': '/' })
+    res.end()
+  }
 })
 
 app.listen(3000, () => console.log('Listening at localhost:3000'))
@@ -91,7 +96,7 @@ function render (type, content) {
       </head>
       <body>
         <header>
-          <h1>Shreds</h1>
+          <h1><a href="/home">Shreds</a></h1>
         </header>
         <main is="shreds-app" type="${type}" hidden>${content}</main>
       </body>
