@@ -35,8 +35,10 @@ function display (user) {
   return crel('article', { id, style, class: classes },
     crel('header',
       thumb(user),
-      crel('address', user.name),
-      stamp(user.status.created_at)
+      crel('span',
+        crel('address', user.name),
+        stamp(user.status.created_at)
+      )
     ),
     content(user.status),
     crel('ul', conversation(user), spotlight(user))

@@ -80,19 +80,15 @@ article:target {
 
 article header {
   background-color: var(--border-color);
-  padding: 0 1em;
-  padding-block-start: 1em;
+  display: flex;
+  align-items: center;
   margin-block-end: 1em;
-}
-article header::after {
-  content: '';
-  display: table;
-  clear: both;
+  padding: .5em 1em;
 }
 article header .thumb {
-  float: left;
   margin-right: 1em;
 }
+
 article section {
   padding: 0 1em;
 }
