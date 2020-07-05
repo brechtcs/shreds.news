@@ -25,6 +25,14 @@ a {
   display: none !important;
 }
 
+body > header {
+  display: flex;
+  align-items: baseline;
+}
+body > header > *:first-child {
+  flex: 1;
+}
+
 main[type=feed] {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

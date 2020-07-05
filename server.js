@@ -85,7 +85,10 @@ function render (type, content) {
         <script type="module" src="/app.js"></script>
       </head>
       <body>
-        <header><h1>Shreds.News</h1></header>
+        <header>
+          <h1>Shreds.News</h1>
+          <a href="https://github.com/brechtcs/shreds.news">Code</a>
+        </header>
         <main is="shreds-app" type="${type}" hidden>
           ${content}
         </main>
