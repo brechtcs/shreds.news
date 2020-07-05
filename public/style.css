@@ -12,10 +12,6 @@ body {
   padding: 1em;
 }
 
-h1 {
-  font-variant: small-caps;
-}
-
 a {
   color: var(--link-color);
   text-decoration: underline;
@@ -28,9 +24,20 @@ a {
 body > header {
   display: flex;
   align-items: baseline;
+
+  background-color: var(--bg-color);
+  border-bottom: 1px solid;
+  font-variant: small-caps;
+  margin-block-end: 1em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 body > header > *:first-child {
   flex: 1;
+}
+body > header a {
+  text-decoration: none;
 }
 
 main[type=feed] {
@@ -40,7 +47,7 @@ main[type=feed] {
   grid-row-gap: 2em;
 }
 main[type=json] {
-  background-color: lightgray;
+  background-color: var(--fg-color);
   color: var(--bg-color);
   padding: 1em;
 }
