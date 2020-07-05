@@ -48,7 +48,7 @@ app.get('/login/callback', passport.authenticate('twitter', {
 
 app.get('/', (req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html' })
-  res.end(render('login', '<a href="/login">login</a>'))
+  res.end(render('login', '<a href="/login">Connect Twitter</a>'))
 })
 
 app.get('/home', async (req, res) => {
