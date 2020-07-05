@@ -1,6 +1,23 @@
-import { feed, json } from './elements.js'
+import { feed, json, markdown } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 import morphdom from 'https://unpkg.com/morphdom@2.x/dist/morphdom-esm.js'
+
+function rewriteInternalLink (e) {
+  if (e.defaultPrevented) return
+
+  var a = (function traverse (node) {
+    if (!node || node === document) return
+    if (node.localName !== 'a' || node.href === undefined) {
+      return traverse(node.parentNode)
+    }
+    return node
+  })(e.target)
+
+  if (a.host === 'shreds.news') {
+    a.protocol = location.protocol
+    a.host = location.host
+  }
+}
 
 customElements.define('shreds-app', class extends HTMLElement {
   static get observedAttributes () {
@@ -13,8 +30,13 @@ customElements.define('shreds-app', class extends HTMLElement {
 
 	connectedCallback () {
     this.connected = true
+    this.addEventListener('click', rewriteInternalLink)
     this.process(this.textContent)
     this.render()
+  }
+
+  disconnectedCallback () {
+    this.removeEventListener('click', rewriteInternalLink)
   }
 
   morph (content) {
@@ -27,6 +49,9 @@ customElements.define('shreds-app', class extends HTMLElement {
         this.data = JSON.parse(data)
         this.data.sort((a, b) => this.order(a, b))
         break
+      case 'markdown':
+        this.data = data
+        break
     }
   }
 
@@ -37,6 +62,9 @@ customElements.define('shreds-app', class extends HTMLElement {
         break
       case 'json':
         this.morph(json(this.data))
+        break
+      case 'markdown':
+        this.morph(markdown(this.data))
         break
     }
 

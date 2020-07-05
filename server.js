@@ -1,6 +1,7 @@
 var { Strategy } = require('passport-twitter')
 var { consumerKey, consumerSecret, callbackURL, sessionSecret } = require('./env')
 var Twit = require('twit')
+var fs = require('fs')
 var outdent = require('outdent')
 var passport = require('passport')
 var polka = require('polka')
@@ -46,9 +47,11 @@ app.get('/login/callback', passport.authenticate('twitter', {
 	res.end()
 })
 
-app.get('/', (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/html' })
-  res.end(render('login', '<a href="/login">Connect Twitter</a>'))
+app.get('/', (req, res, next) => {
+  fs.readFile('./README.md', function (err, content) {
+    res.writeHead(200, { 'Content-Type': 'text/html' })
+    res.end(render('markdown', content))
+  })
 })
 
 app.get('/home', async (req, res) => {
@@ -91,9 +94,7 @@ function render (type, content) {
           <h1>Shreds</h1>
           <a href="https://github.com/brechtcs/shreds.news">Source Code</a>
         </header>
-        <main is="shreds-app" type="${type}" hidden>
-          ${content}
-        </main>
+        <main is="shreds-app" type="${type}" hidden>${content}</main>
       </body>
     </html>
   `

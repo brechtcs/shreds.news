@@ -1,6 +1,7 @@
 import { DateTime } from 'https://moment.github.io/luxon/es6/luxon.js'
 import JSONFormatter from 'https://unpkg.com/json-formatter-js@2.x/dist/json-formatter.esm.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
+import marked from 'https://unpkg.com/marked@1.x/lib/marked.esm.js'
 
 export function json (data) {
   var formatter = new JSONFormatter(data)
@@ -10,6 +11,12 @@ export function json (data) {
 export function feed (data) {
   var items = data.filter(choose).map(display)
   return crel('main', items)
+}
+
+export function markdown (text) {
+  var main = crel('main')
+  main.innerHTML = marked(text)
+  return main
 }
 
 function choose (user) {
