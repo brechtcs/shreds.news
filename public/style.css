@@ -19,14 +19,15 @@ a {
 }
 
 h1 a {
-  background-color: #1a1a1a;
+  background-color: var(--link-color);
   clip-path: var(--shred-edges);
-  color: inherit;
+  color: var(--fg-color);
+  filter: grayscale(85%);
   padding: .25em .5em .25em .25em;
   text-decoration: none;
 }
 h1 a:hover {
-  background-color: var(--link-color);
+  filter: brightness(120%);
 }
 
 [hidden] {
@@ -51,17 +52,17 @@ body > header > *:first-child {
 body > header h1 {
   margin: 0;
 }
-body > header a {
-  background-color: var(--fg-color);
-  color: black;
+
+nav a {
+  background-color: black;
+  border: 1px solid var(--fg-color);
+  color: var(--fg-color);
+  padding: .5em;
   text-decoration: none;
 }
-body > header a:hover {
-  background-color: var(--link-color);
-  color: var(--fg-color);
-}
-nav a {
-  padding: .5em;
+nav a:hover {
+  background-color: var(--fg-color);
+  color: black
 }
 
 main[type=feed] {
