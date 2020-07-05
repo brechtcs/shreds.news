@@ -92,7 +92,6 @@ function render (type, content) {
       <body>
         <header>
           <h1>Shreds</h1>
-          <a href="https://github.com/brechtcs/shreds.news">Source Code</a>
         </header>
         <main is="shreds-app" type="${type}" hidden>${content}</main>
       </body>

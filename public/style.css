@@ -51,6 +51,12 @@ main[type=json] {
   color: var(--bg-color);
   padding: 1em;
 }
+main[type=markdown] {
+  max-width: 37em;
+}
+main[type=markdown] h1:first-child {
+  display: none;
+}
 
 article {
   background-color: #1a1a1a;
