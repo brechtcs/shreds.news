@@ -80,7 +80,9 @@ function render (type, content) {
     <html>
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>shreds.news</title>
+
         <link rel="stylesheet" href="/style.css">
         <script type="module" src="/app.js"></script>
       </head>
