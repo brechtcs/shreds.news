@@ -3,6 +3,7 @@
   --bg-color: #222;
   --border-color: #fafafa;
   --link-color: #2fc2ef;
+  --hover-effect: background-color .38s linear, color .24s linear;
   --shred-edges: polygon(0% 0%, 2% 38%, 0% 62%, 3% 93%, 0% 100%, 100% 100%, 96% 78%, 100% 74%, 99% 54%, 94% 57%, 99% 42%, 98% 25%, 98% 15%, 93% 9%, 97% 4%, 90% 0%, 73% 2%, 54% 0%, 59% 5%, 32% 0%, 15% 2%);
 }
 
@@ -16,18 +17,24 @@ body {
 a {
   color: var(--link-color);
   text-decoration: underline;
+  transition: var(--hover-effect);
+}
+a:hover {
+  transition: var(--hover-effect);
 }
 
-h1 a {
-  background-color: var(--link-color);
-  clip-path: var(--shred-edges);
-  color: var(--fg-color);
-  filter: grayscale(85%);
-  padding: .25em .5em .25em .25em;
+nav {
+  border: 1px solid;
+}
+nav a {
+  color: inherit;
+  padding: .5em;
   text-decoration: none;
 }
-h1 a:hover {
-  filter: brightness(120%);
+nav a:hover {
+  background-color: var(--fg-color);
+  border-color: var(--fg-color);
+  color: var(--bg-color);
 }
 
 [hidden] {
@@ -36,33 +43,39 @@ h1 a:hover {
 
 body > header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 
-  background: linear-gradient(to bottom, var(--bg-color), transparent);
+  background-color: var(--bg-color);
+  border-bottom: 1px solid;
   font-variant: small-caps;
   padding-block-start: 1em;
-  padding-block-end: 1em;
   position: sticky;
   top: 0;
   z-index: 1;
 }
-body > header > *:first-child {
-  flex: 1;
+body > header * {
+  display: inline-block;
 }
 body > header h1 {
+  flex: 1;
+  font-style: italic;
+  line-height: 1.62;
   margin: 0;
 }
-
-nav a {
-  background-color: black;
-  border: 1px solid var(--fg-color);
-  color: var(--fg-color);
-  padding: .5em;
+body > header h1 a {
+  background-color: var(--fg-color);
+  clip-path: var(--shred-edges);
+  color: var(--bg-color);
+  padding-left: .35em;
+  padding-right: .5em;
   text-decoration: none;
 }
-nav a:hover {
-  background-color: var(--fg-color);
-  color: black
+body > header h1 a:hover {
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+}
+body > header nav {
+  border-bottom: none;
 }
 
 main[type=feed] {
