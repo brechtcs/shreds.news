@@ -1,4 +1,4 @@
-import { feed, json, link, markdown } from './elements.js'
+import { feed, json, link } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 import morphdom from 'https://unpkg.com/morphdom@2.x/dist/morphdom-esm.js'
 
@@ -49,9 +49,6 @@ customElements.define('shreds-app', class extends HTMLElement {
         this.data = JSON.parse(data)
         this.data.sort((a, b) => this.order(a, b))
         break
-      case 'markdown':
-        this.data = data
-        break
     }
   }
 
@@ -62,9 +59,6 @@ customElements.define('shreds-app', class extends HTMLElement {
         break
       case 'json':
         this.morph(json(this.data))
-        break
-      case 'markdown':
-        this.morph(markdown(this.data))
         break
     }
 

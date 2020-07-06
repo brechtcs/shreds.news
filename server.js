@@ -1,5 +1,6 @@
 var { Strategy } = require('passport-twitter')
 var { consumerKey, consumerSecret, callbackURL, sessionSecret } = require('./env')
+var MarkdownIt = require('markdown-it')
 var Twit = require('twit')
 var fs = require('fs')
 var morgan = require('morgan')
@@ -34,6 +35,7 @@ passport.deserializeUser((obj, cb) => {
 	return cb(null, obj)
 })
 
+var md = new MarkdownIt()
 var app = polka()
 app.use(morgan('tiny'))
 app.use(static('public'))
@@ -50,9 +52,10 @@ app.get('/login/callback', passport.authenticate('twitter', {
 })
 
 app.get('/', (req, res, next) => {
-  fs.readFile('./README.md', function (err, content) {
+  fs.readFile('./README.md', 'utf8', function (err, readme) {
+    var content = md.render(readme)
     res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end(render('markdown', content))
+    res.end(render('content', content))
   })
 })
 

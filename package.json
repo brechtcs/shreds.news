@@ -2,6 +2,7 @@
   "dependencies": {
     "await-callback": "^1.0.1",
     "express-session": "^1.17.1",
+    "markdown-it": "^11.0.0",
     "morgan": "^1.10.0",
     "outdent": "^0.7.1",
     "passport": "^0.4.1",

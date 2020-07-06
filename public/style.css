@@ -83,6 +83,12 @@ body > header nav {
   border-bottom: none;
 }
 
+main[type=content] {
+  max-width: 23em;
+}
+main[type=content][hidden] {
+  display: block !important;
+}
 main[type=feed] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
@@ -98,9 +104,6 @@ main[type=json] {
   background-color: var(--fg-color);
   color: var(--bg-color);
   padding: 1em;
-}
-main[type=markdown] {
-  max-width: 37em;
 }
 
 article {
