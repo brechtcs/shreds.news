@@ -79,8 +79,10 @@ body > header nav {
 }
 
 main[type=feed] {
-  column-gap: 2em;
-  column-width: 15em;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
+  grid-column-gap: 2em;
+  align-items: start;
 }
 main[type=feed] > article {
   display: inline-block;
