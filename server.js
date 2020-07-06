@@ -2,6 +2,7 @@ var { Strategy } = require('passport-twitter')
 var { consumerKey, consumerSecret, callbackURL, sessionSecret } = require('./env')
 var Twit = require('twit')
 var fs = require('fs')
+var morgan = require('morgan')
 var outdent = require('outdent')
 var passport = require('passport')
 var polka = require('polka')
@@ -34,6 +35,7 @@ passport.deserializeUser((obj, cb) => {
 })
 
 var app = polka()
+app.use(morgan('tiny'))
 app.use(static('public'))
 app.use(session(sessionSettings))
 app.use(passport.initialize())
@@ -97,14 +99,18 @@ function render (type, content) {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>shreds.news</title>
+        <title>Shreds &middot; News</title>
 
         <link rel="stylesheet" href="/style.css">
         <script type="module" src="/app.js"></script>
       </head>
       <body>
         <header is="shreds-header">
-          <h1><a href="/home">Shreds</a></h1>
+          <h1>
+            <a href="/home">
+              <svg viewBox="0 0 35 30"><use xlink:href="/icon.svg#logo"></use></svg>
+            </a>
+          </h1>
         </header>
         <main is="shreds-app" type="${type}" hidden>${content}</main>
       </body>
