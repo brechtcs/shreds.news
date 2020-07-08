@@ -1,26 +1,29 @@
 var { Strategy } = require('passport-twitter')
-var { consumerKey, consumerSecret, callbackURL, sessionSecret } = require('./env')
+var { get } = require('./lib/twitter')
+var { join } = require('path')
 var MarkdownIt = require('markdown-it')
-var Twit = require('twit')
+var env = require('./env')
 var fs = require('fs')
 var morgan = require('morgan')
-var outdent = require('outdent')
 var passport = require('passport')
 var polka = require('polka')
-var promise = require('await-callback')
+var render = require('./lib/render')
 var session = require('express-session')
 var static = require('serve-static')
 var store = require('session-file-store')
 
+var APP = join(__dirname, 'app')
+var README = join(__dirname, 'README.md')
+
 var FileStore = store(session)
 var sessionSettings = {
   store: new FileStore({ ttl: Infinity }),
-  secret: sessionSecret,
+  secret: env.sessionSecret,
   saveUninitialized: true,
   resave: true
 }
 
-passport.use(new Strategy({ consumerKey, consumerSecret, callbackURL }, (token, secret, profile, cb) => {
+passport.use(new Strategy(env, (token, secret, profile, cb) => {
 	profile.accessToken = token
 	profile.accessTokenSecret = secret
 	return cb(null, profile)
@@ -36,9 +39,19 @@ passport.deserializeUser((obj, cb) => {
 })
 
 var md = new MarkdownIt()
-var app = polka()
+var app = polka({
+  onError: (err, req, res) => {
+    res.writeHead(err.code, { 'Content-Type': 'text/html' })
+
+    if (err.code !== 404)
+      res.end(render('text/html', '<h1>Oops</h1><p>Something went wrong</p>'))
+    else
+      res.end(render('text/html', '<h1>Oops</h1><p>Page not found</p>'))
+  }
+})
+
 app.use(morgan('tiny'))
-app.use(static('public'))
+app.use(static(APP))
 app.use(session(sessionSettings))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -55,14 +68,14 @@ app.get('/', (req, res, next) => {
   fs.readFile('./README.md', 'utf8', function (err, readme) {
     var content = md.render(readme)
     res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end(render('content', content))
+    res.end(render('text/html', content))
   })
 })
 
 app.get('/home', async (req, res) => {
   if (req.user) {
     var data = await get(req.user, 'friends/list', { count: 200 })
-    var page = render('feed', JSON.stringify(data.users))
+    var page = render('application/json', JSON.stringify(data.users))
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(page)
   } else {
@@ -71,7 +84,7 @@ app.get('/home', async (req, res) => {
   }
 })
 
-app.get('/logout', function (req, res) {
+app.get('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) console.error(err)
     res.writeHead(302, { 'Location': '/' })
@@ -80,46 +93,3 @@ app.get('/logout', function (req, res) {
 })
 
 app.listen(3000, () => console.log('Listening at localhost:3000'))
-
-//======
-
-function get (user, endpoint, opts = {}) {
-	var t = new Twit({
-		consumer_key: consumerKey,
-		consumer_secret: consumerSecret,
-		access_token: user.accessToken,
-		access_token_secret: user.accessTokenSecret
-	})
-
-	opts.tweet_mode = opts.tweet_mode || 'extended'
-	return promise(done => t.get(endpoint, opts, done))
-}
-
-function render (type, content) {
-  return outdent`
-    <!doctype html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Shreds &middot; News</title>
-
-        <link rel="stylesheet" href="/style.css">
-        <script type="module" src="/app.js"></script>
-      </head>
-      <body>
-        <header is="shreds-header">
-          <h1>
-            <a href="/home">
-              <svg viewBox="0 0 35 30"><use xlink:href="/icon.svg#logo"></use></svg>
-            </a>
-          </h1>
-        </header>
-        <noscript>
-          <aside class="nojs">Shreds requires JavaScript to work properly. Please switch it on to continue using the app.</aside>
-        </noscript>
-        <main id="app" is="shreds-app" type="${type}" hidden>${content}</main>
-      </body>
-    </html>
-  `
-}

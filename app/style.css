@@ -111,28 +111,24 @@ body > header nav {
   border-bottom: none;
 }
 
-main[type=content] {
+main {
+  display: none;
   max-width: 23em;
 }
-main[type=content][hidden] {
-  display: block !important;
-}
-main[type=feed] {
+main.ready {
   display: grid;
+}
+main.feed {
   align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
   grid-column-gap: 2em;
   grid-row-gap: 3em;
+  max-width: unset;
   padding-block-start: 2em;
 }
-main[type=feed] > article {
+main.feed > article {
   display: inline-block;
   width: 100%;
-}
-main[type=json] {
-  background-color: var(--fg-color);
-  color: var(--bg-color);
-  padding: 1em;
 }
 
 article {

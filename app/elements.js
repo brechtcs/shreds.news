@@ -1,16 +1,5 @@
 import { DateTime } from 'https://moment.github.io/luxon/es6/luxon.js'
-import JSONFormatter from 'https://unpkg.com/json-formatter-js@2.x/dist/json-formatter.esm.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
-
-export function json (data) {
-  var formatter = new JSONFormatter(data)
-  return crel('main', formatter.render())
-}
-
-export function feed (data) {
-  var items = data.filter(choose).map(article)
-  return crel('main', items)
-}
 
 export function link (href, text) {
   return crel('a', { href },
@@ -18,29 +7,18 @@ export function link (href, text) {
   )
 }
 
-function choose (user) {
-  if (user.status == null) return false
-  if (user.status.retweeted_status && !user.status.entities.user_mentions[0]) {
-    return false // Invalid retweet
-  }
-  return true
-}
-
-function article (user) {
-  var id = user.screen_name
-  var classes = localStorage.getItem(id) || ''
-  var style = `--border-color:#${user.profile_link_color};`
+export function article (user) {
   var t = user.status.retweeted_status || user.status
 
-  return crel('article', { id, style, class: classes },
-    header(user, classes.includes('spotlight')),
+  return crel('article',
+    header(user),
     address(user.status, user),
     content(t, user)
   )
 }
 
 function header (user, spotlight) {
-  var avatar = thumb(user, spotlight)
+  var avatar = thumb(user)
   var info = crel('span',
     crel('address', user.name),
     stamp(user.status.created_at)
@@ -56,7 +34,7 @@ function header (user, spotlight) {
   return crel('header', avatar, info)
 }
 
-function thumb (user, spotlight) {
+function thumb (user) {
   var href = new URL('#' + user.screen_name, location)
 
   return crel('a', { href, class: 'thumb' },
@@ -144,7 +122,7 @@ function stamp (str) {
 function icon (name, attrs) {
   var el = crel('span', attrs)
   el.innerHTML = `<svg viewBox="0 0 512 512">
-    <use xlink:href="/sprite.svg#${name}">
+    <use xlink:href="/icons/sprite.svg#${name}">
   </svg>`
 
   return el

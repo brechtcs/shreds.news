@@ -1,6 +1,6 @@
 .PHONY: all
 
-all: public/favicon.ico
+all: app/favicon.ico
 
-public/favicon.ico: public/icon.svg
+app/favicon.ico: app/icons/logo.svg
 	convert -background "#2fc2ef" -define icon:auto-resize $< $@
