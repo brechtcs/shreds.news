@@ -91,7 +91,7 @@ function nav (status, user) {
   if (status.entities.media != null) {
     addItem(referral(status, user, 'View Media'))
   }
-  if (status.in_reply_to_status_id == null) {
+  if (status.in_reply_to_status_id != null) {
     addItem(referral(status, user, 'View Thread'))
   }
 
