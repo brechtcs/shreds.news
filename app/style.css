@@ -1,15 +1,12 @@
 :root {
   --fg-color: #fafafa;
   --bg-color: #222;
-  --border-color: #fafafa;
-  --link-color: #2fc2ef;
   --hover-effect: background-color .38s linear, color .24s linear, fill .24s linear;
   --shred-edges: polygon(2% 0%, 4% 7%, 0% 21%, 6% 38%, 0% 62%, 5% 59%, 0% 74%, 4% 95%, 0% 100%, 100% 100%, 96% 78%, 100% 74%, 99% 54%, 94% 57%, 99% 42%, 98% 25%, 98% 15%, 93% 9%, 97% 4%, 90% 0%);
 }
 
 body {
   background-color: var(--bg-color);
-  border-color: var(--border-color);
   color: var(--fg-color);
   fill: currentColor;
   padding: 1em;
@@ -20,7 +17,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--link-color);
+  color: #2fc2ef;
   text-decoration: underline;
   transition: var(--hover-effect);
 }
@@ -132,8 +129,9 @@ main.feed > article {
 }
 
 article {
-  background-color: #1a1a1a;
-  border-bottom: 1px solid var(--border-color);
+  --bg-color: #1a1a1a;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--theme-color);
   clip-path: var(--shred-edges);
   color: var(--fg-color);
   filter: opacity(80%) grayscale(85%);
@@ -150,7 +148,7 @@ article:hover {
 article.spotlight,
 article.spotlight:hover,
 article:target {
-  background-color: black;
+  --bg-color: black;
   filter: brightness(120%);
 }
 article > * {
@@ -160,7 +158,8 @@ article > * {
 }
 
 article header {
-  background-color: var(--border-color);
+  --bg-color: var(--theme-color);
+  background-color: var(--bg-color);
   display: flex;
   align-items: center;
   margin-block-end: .5em;
@@ -168,6 +167,7 @@ article header {
   padding-block-end: .38em;
 }
 article header .thumb {
+  background-color: var(--theme-color);
   margin-inline-end: 1em;
 }
 article header .thumb .off {
@@ -238,7 +238,7 @@ article.spotlight nav a:hover {
   height: 100%;
   width: 100%;
 
-  background-color: var(--border-color);
+  background-color: var(--bg-color);
   cursor: pointer;
   filter: opacity(0);
   transition: filter .62s;

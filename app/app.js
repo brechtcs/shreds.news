@@ -121,7 +121,7 @@ class ShredsTweet extends HTMLElement {
   static create (account) {
     var id = account.screen_name
     var classes = localStorage.getItem(id) || ''
-    var style = `--border-color:#${account.profile_link_color};`
+    var style = `--theme-color:#${account.profile_link_color};`
 
     var tweet = document.createElement('article', { is: 'shreds-tweet' })
     tweet.setAttribute('id', id)
