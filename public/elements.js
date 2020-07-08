@@ -8,12 +8,14 @@ export function json (data) {
 }
 
 export function feed (data) {
-  var items = data.filter(choose).map(display)
+  var items = data.filter(choose).map(article)
   return crel('main', items)
 }
 
 export function link (href, text) {
-  return crel('a', { href }, text || href)
+  return crel('a', { href },
+    crel('span', { class: 'text' }, text == null ? href : text)
+  )
 }
 
 function choose (user) {
@@ -24,83 +26,108 @@ function choose (user) {
   return true
 }
 
-function display (user) {
+function article (user) {
   var id = user.screen_name
-  var classes = localStorage.getItem(id)
-  var style = colors(user)
+  var classes = localStorage.getItem(id) || ''
+  var style = `--border-color:#${user.profile_link_color};`
+  var t = user.status.retweeted_status || user.status
 
   return crel('article', { id, style, class: classes },
-    crel('header',
-      thumb(user),
-      crel('span',
-        crel('address', user.name),
-        stamp(user.status.created_at)
-      )
-    ),
-    content(user.status),
-    crel('ul', conversation(user), spotlight(user))
+    header(user, classes.includes('spotlight')),
+    address(user.status, user),
+    content(t, user)
   )
 }
 
-function thumb (user) {
-  var href = `https://twitter.com/${user.screen_name}/with_replies`
-
-  return crel('a', { href, class: 'thumb' },
-    crel('img', { src: user.profile_image_url_https })
+function header (user, spotlight) {
+  var avatar = thumb(user, spotlight)
+  var info = crel('span',
+    crel('address', user.name),
+    stamp(user.status.created_at)
   )
-}
 
-function content (status) {
-  if (status.retweeted_status ) {
-    var rt = status.retweeted_status
-    var author = status.entities.user_mentions[0]
-    var href = `https://twitter.com/${author.screen_name}/status/${rt.id_str}`
-    var content = crel('span', { class: 'retweet' }, rt.full_text)
-    var link = author ? crel('a', { href, class: 'author' }, author.name) : null
-    return crel('section', link, content)
-  } else {
-    return crel('section', status.full_text)
-  }
-}
-
-function colors (user) {
-  var style = ''
-  style += `--border-color:#${user.profile_link_color};`
-  return style
-}
-
-function spotlight (user) {
-  var href = `#${user.screen_name}`
-  var button = crel('a', { href }, 'Toggle spotlight')
-  var item = crel('li', button)
-
-  button.addEventListener('click', event => {
+  avatar.addEventListener('click', event => {
     var article = window[user.screen_name]
     article.classList.toggle('spotlight')
     localStorage.setItem(user.screen_name, article.className)
     event.preventDefault()
   })
 
-  return item
+  return crel('header', avatar, info)
 }
 
-function conversation (user) {
-  var href = `https://twitter.com/${user.screen_name}/status/${user.status.id_str}`
-  var link = crel('a', { href }, 'Open conversation')
-  return crel('li', link)
+function thumb (user, spotlight) {
+  var href = new URL('#' + user.screen_name, location)
+
+  return crel('a', { href, class: 'thumb' },
+    crel('img', { src: user.profile_image_url_https }),
+    icon('brightness-up', { class: 'hover on' }),
+    icon('brightness-down', { class: 'hover off' })
+  )
 }
 
-function hashtags (status) {
-  return status.entities.hashtags.length <= 3
-}
+function address (status, user) {
+  var rt = !!status.retweeted_status
+  var mentions = status.entities.user_mentions
 
-function retweet (status) {
-  if (status.retweeted_status) {
-    var rt = status.retweeted_status
-    rt.via = status.user
-    return rt
+  if (!rt && mentions.length === 0) {
+    return null
   }
-  return status
+
+  var names = status.in_reply_to_status_id
+    ? mentions.map(m => m.name).join(', ')
+    : mentions[0].name
+
+  return crel('aside',
+    icon(rt ? 'retweet' : names ? 'reply' : 'thread'),
+    crel('address', names || referral(status, user, 'Click to read thread')),
+    rt ? stamp(status.retweeted_status.created_at) : null
+  )
+}
+
+function content (status, user) {
+  var tweet = referral(status, user, '')
+  tweet.classList.add('content')
+
+  var cursor = status.display_text_range[0]
+  var end = status.display_text_range[1]
+
+  status.entities.urls.forEach(url => {
+    tweet.append(status.full_text.substring(cursor, url.indices[0]))
+    tweet.append(crel('a', { href: url.expanded_url }, url.display_url))
+    cursor = url.indices[1]
+  })
+
+  if (cursor < end) {
+    tweet.append(text(status.full_text.substring(cursor, end)))
+  }
+
+  tweet.append(nav(status, user))
+  return tweet
+}
+
+function nav (status, user) {
+  var el = crel('nav')
+  var sep = ''
+
+  if (status.entities.media != null) {
+    addItem(referral(status, user, 'View Media'))
+  }
+  if (status.in_reply_to_status_id == null) {
+    addItem(referral(status, user, 'View Thread'))
+  }
+
+  function addItem (item) {
+    el.append(text(sep))
+    el.append(item)
+    sep = ' · '
+  }
+
+  return el
+}
+
+function referral (status, user, text) {
+  return link(`https://twitter.com/${user.screen_name}/status/${status.id_str}`, text)
 }
 
 function stamp (str) {
@@ -112,4 +139,17 @@ function stamp (str) {
   }, 60000)
 
   return el
+}
+
+function icon (name, attrs) {
+  var el = crel('span', attrs)
+  el.innerHTML = `<svg viewBox="0 0 512 512">
+    <use xlink:href="/sprite.svg#${name}">
+  </svg>`
+
+  return el
+}
+
+function text (str) {
+  return document.createTextNode(str)
 }

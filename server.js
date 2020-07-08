@@ -115,7 +115,10 @@ function render (type, content) {
             </a>
           </h1>
         </header>
-        <main is="shreds-app" type="${type}" hidden>${content}</main>
+        <noscript>
+          <aside class="nojs">Shreds requires JavaScript to work properly. Please switch it on to continue using the app.</aside>
+        </noscript>
+        <main id="app" is="shreds-app" type="${type}" hidden>${content}</main>
       </body>
     </html>
   `
