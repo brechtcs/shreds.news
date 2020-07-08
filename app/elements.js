@@ -13,7 +13,8 @@ export function article (user) {
   return crel('article',
     header(user),
     address(user.status, user),
-    content(t, user)
+    content(t, user),
+    nav(t, user)
   )
 }
 
@@ -80,7 +81,6 @@ function content (status, user) {
     tweet.append(text(status.full_text.substring(cursor, end)))
   }
 
-  tweet.append(nav(status, user))
   return tweet
 }
 
@@ -89,10 +89,10 @@ function nav (status, user) {
   var sep = ''
 
   if (status.entities.media != null) {
-    addItem(referral(status, user, 'View Media'))
+    addItem(referral(status, user, 'Media'))
   }
   if (status.in_reply_to_status_id != null) {
-    addItem(referral(status, user, 'View Thread'))
+    addItem(referral(status, user, 'Thread'))
   }
 
   function addItem (item) {

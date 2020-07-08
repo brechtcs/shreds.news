@@ -35,7 +35,9 @@ a:hover {
 
 nav {
   display: flex;
+  justify-content: center;
   align-items: center;
+
   background: black;
   border: 1px solid;
   font-variant: small-caps;
@@ -131,13 +133,10 @@ main.feed > article {
 article {
   --bg-color: #1a1a1a;
   background-color: var(--bg-color);
-  border-bottom: 1px solid var(--theme-color);
   clip-path: var(--shred-edges);
   color: var(--fg-color);
   filter: opacity(80%) grayscale(85%);
   min-height: 7em;
-  padding: 1px;
-  padding-block-end: 1em;
   transition: filter .38s;
   white-space: pre-wrap;
 }
@@ -160,6 +159,8 @@ article > * {
 article header {
   --bg-color: var(--theme-color);
   background-color: var(--bg-color);
+  border: 1px solid;
+  border-inline: none;
   display: flex;
   align-items: center;
   margin-block-end: .5em;
@@ -208,23 +209,21 @@ article aside a {
 
 article .content {
   display: block;
+  border-bottom: 1px solid var(--theme-color);
   color: inherit;
+  padding-block-end: 1.62em;
   text-decoration: none;
 }
 
 article nav {
-  font-size: .9em;
-  margin: 0 auto;
-  margin-block-start: 1.62em;
+  --bg-color: var(--theme-color);
+  background-color: var(--bg-color);
+  border-inline: none;
+  padding: 0;
+  width: 100%;
 }
-article.spotlight nav {
-  background: var(--fg-color);
-  border-color: var(--fg-color);
-  color: var(--bg-color);
-}
-article.spotlight nav a:hover {
-  background: var(--bg-color);
-  color: var(--fg-color);
+article nav:hover {
+
 }
 
 .thumb {
