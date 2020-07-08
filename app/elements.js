@@ -37,8 +37,9 @@ function header (user, spotlight) {
 
 function thumb (user) {
   var href = new URL('#' + user.screen_name, location)
+  var title = user.screen_name
 
-  return crel('a', { href, class: 'thumb' },
+  return crel('a', { href, title, class: 'thumb' },
     crel('img', { src: user.profile_image_url_https }),
     icon('brightness-up', { class: 'hover on' }),
     icon('brightness-down', { class: 'hover off' })
