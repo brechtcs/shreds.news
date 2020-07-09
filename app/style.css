@@ -113,17 +113,21 @@ body > header nav {
 
 main {
   display: none;
-  max-width: 23em;
 }
 main.ready {
   display: grid;
 }
+
+main[content-type="text/html"] {
+  display: block;
+  max-width: 23em;
+}
+
 main.feed {
   align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
   grid-column-gap: 2em;
   grid-row-gap: 3em;
-  max-width: unset;
   padding-block-start: 2em;
 }
 main.feed > article {

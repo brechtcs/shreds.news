@@ -8,14 +8,18 @@ export function link (href, text) {
 }
 
 export function article (user) {
-  var t = user.status.retweeted_status || user.status
+  var el = crel('article')
+  var classes = localStorage.getItem(user.screen_name) || ''
+  var status = user.status.retweeted_status || user.status
 
-  return crel('article',
-    header(user),
-    address(user.status, user),
-    content(t, user),
-    nav(t, user)
-  )
+  el.setAttribute('id', user.screen_name)
+  el.setAttribute('class', classes)
+  el.style.setProperty('--theme-color', `#${user.profile_link_color}`)
+  el.append(header(user))
+  el.append(address(user.status, user) || '')
+  el.append(content(status, user))
+  el.append(nav(status, user))
+  return el
 }
 
 function header (user, spotlight) {
