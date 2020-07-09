@@ -1,23 +1,26 @@
 import { DateTime } from 'https://moment.github.io/luxon/es6/luxon.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
-export function link (href, text) {
-  return crel('a', { href },
-    crel('span', { class: 'text' }, text == null ? href : text)
-  )
+export function link (href, content) {
+  content = typeof content === 'string'
+    ? crel('span', { class: 'text' }, content)
+    : content || href
+
+  return crel('a', { href }, content)
 }
 
 export function article (user) {
   var el = crel('article')
   var classes = localStorage.getItem(user.screen_name) || ''
+  var bg = user.profile_banner_url || user.profile_background_image_url
   var status = user.status.retweeted_status || user.status
 
   el.setAttribute('id', user.screen_name)
   el.setAttribute('class', classes)
+  el.style.setProperty('--bg-img', `url(${bg})`)
   el.style.setProperty('--theme-color', `#${user.profile_link_color}`)
   el.append(header(user))
-  el.append(address(user.status, user) || '')
-  el.append(content(status, user))
+  el.append(content(user.status, user))
   el.append(nav(status, user))
   return el
 }
@@ -70,9 +73,10 @@ function address (status, user) {
 }
 
 function content (status, user) {
-  var tweet = referral(status, user, '')
+  var tweet = referral(status, user, address(status, user) || '')
   tweet.classList.add('content')
 
+  status = status.retweeted_status || status
   var cursor = status.display_text_range[0]
   var end = status.display_text_range[1]
 

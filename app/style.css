@@ -2,6 +2,7 @@
   --theme-color: #2fc2ef;
   --fg-color: #fafafa;
   --bg-color: #222;
+  --bg-img: none;
   --hover-effect: background-color .38s linear, color .24s linear, fill .24s linear;
   --shred-edges: polygon(2% 0%, 4% 7%, 0% 21%, 6% 38%, 0% 62%, 5% 59%, 0% 74%, 4% 95%, 0% 100%, 100% 100%, 96% 78%, 100% 74%, 99% 54%, 94% 57%, 99% 42%, 98% 25%, 98% 15%, 93% 9%, 97% 4%, 90% 0%);
 }
@@ -18,12 +19,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--theme-color);
+  color: inherit;
   text-decoration: underline;
-  transition: var(--hover-effect);
 }
 a:hover {
-  transition: var(--hover-effect);
+  text-decoration: underline double;
 }
 
 .nojs {
@@ -51,6 +51,7 @@ nav:empty {
 nav a {
   color: inherit;
   text-decoration: none;
+  transition: var(--hover-effect);
 }
 nav a:hover {
   background-color: var(--fg-color);
@@ -98,6 +99,7 @@ body > header h1 a {
   color: var(--bg-color);
   fill: var(--bg-color);
   text-decoration: none;
+  transition: var(--hover-effect);
 }
 body > header h1 a:hover {
   background-color: var(--bg-color);
@@ -136,26 +138,25 @@ main.feed > article {
 }
 
 article {
-  --bg-color: #1a1a1a;
+  --bg-color: black;
   background-color: var(--bg-color);
   clip-path: var(--shred-edges);
   color: var(--fg-color);
   filter: opacity(80%) grayscale(85%);
   min-height: 7em;
-  transition: filter .38s;
+  transition: filter 3.14s ease;
   white-space: pre-wrap;
 }
 article:hover {
   filter: opacity(90%) grayscale(0%);
-  transition: filter .38s;
 }
 article.spotlight,
 article.spotlight:hover,
 article:target {
-  --bg-color: black;
   filter: brightness(120%);
 }
 article > * {
+  background-color: var(--bg-color);
   padding-block-start: .5em;
   padding-inline-start: 1.62em;
   padding-inline-end: 1.62em;
@@ -163,12 +164,10 @@ article > * {
 
 article header {
   --bg-color: var(--theme-color);
-  background-color: var(--bg-color);
   border: 1px solid;
   border-inline: none;
   display: flex;
   align-items: center;
-  margin-block-end: .5em;
   padding-block-start: .62em;
   padding-block-end: .38em;
 }
@@ -185,15 +184,21 @@ article.spotlight header .thumb .on {
 article.spotlight header .thumb .off {
   visibility: visible;
 }
+article header:hover ~ .content {
+  animation: 1.62s scan linear;
+  background: center / cover no-repeat var(--bg-img) var(--bg-color);
+  color: transparent;
+}
 
 article aside {
   display: flex;
   align-items: start;
   line-height: 1;
+  margin-block-end: .5em;
 }
 article aside address {
   flex: 0 1 auto;
-  border-bottom: 1px dashed gray;
+  border-bottom: 1px dashed;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -219,19 +224,15 @@ article .content {
   padding-block-end: 1.62em;
   text-decoration: none;
 }
-article .content a {
-  filter: brightness(2);
+article .content:hover {
+  transition: color 1s;
 }
 
 article nav {
   --bg-color: var(--theme-color);
-  background-color: var(--bg-color);
   border-inline: none;
   padding: 0;
   width: 100%;
-}
-article nav:hover {
-
 }
 
 .thumb {
@@ -252,8 +253,13 @@ article nav:hover {
 }
 .thumb:hover .hover {
   filter: none;
-  transition: filter .38s;
 }
 .thumb img {
   border-radius: 9999px;
+}
+
+@keyframes scan {
+  0% { background-position: top left; }
+  62% { background-position: bottom right; }
+  100% { background-position: center; }
 }
