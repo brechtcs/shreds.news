@@ -37,46 +37,35 @@ class ShredsApp extends HTMLElement {
         statuses: new Set()
       }
 
-      JSON.parse(data).filter(this.filter)
-        .sort((a, b) => this.order(a, b))
-        .forEach(account => this.render(account))
+      JSON.parse(data).forEach(acc => this.insert(acc))
     }
 
     this.classList.add('ready')
   }
 
-  render (account) {
-    if (this.state.statuses.has(account.status.id_str)) {
-      return
-    }
+  insert (account) {
+    if (this.drop(account.status)) return
 
     var element = article(account)
+    var date = new Date(account.status.created_at)
     this.state.accounts.set(element, account)
     this.state.statuses.add(account.status.id_str)
-    this.insertBefore(element, this.firstChild)
-  }
 
-  filter (account) {
-    var status = account.status
+    for (var sibling of this.children) {
+      var ts = sibling.getAttribute('data-created')
 
-    if (status == null) return false
-    if (status.retweeted_status && !status.entities.user_mentions[0]) {
-      return false // Invalid retweet
+      if (date > new Date(ts)) {
+        return this.insertBefore(element, sibling)
+      }
     }
-    return true
+
+    this.append(element)
   }
 
-  order (a, b) {
-    var one = this.date(a.status)
-    var two = this.date(b.status)
-
-    if (one > two) return 1
-    else if (one < two) return -1
-    else return 0
-  }
-
-  date (status) {
-    return status ? new Date(status.created_at) : new Date(0)
+  drop (status) {
+    return status == null
+      || this.state.statuses.has(status.id_str) // already rendered
+      || status.retweeted_status && !status.entities.user_mentions[0] // Invalid retweet
   }
 
   get contentType () {

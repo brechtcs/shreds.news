@@ -17,6 +17,7 @@ export function article (user) {
 
   el.setAttribute('id', user.screen_name)
   el.setAttribute('class', classes)
+  el.setAttribute('data-created', user.status.created_at)
   el.style.setProperty('--bg-img', `url(${bg})`)
   el.style.setProperty('--theme-color', `#${user.profile_link_color}`)
   el.append(header(user))
