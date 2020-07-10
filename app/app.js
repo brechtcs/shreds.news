@@ -1,7 +1,7 @@
 import { article, link } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
-function rewriteInternalLink (e) {
+document.addEventListener('click', e => {
   if (e.defaultPrevented) return
 
   var a = (function traverse (node) {
@@ -16,16 +16,11 @@ function rewriteInternalLink (e) {
     a.protocol = location.protocol
     a.host = location.host
   }
-}
+})
 
 class ShredsApp extends HTMLElement {
-	connectedCallback () {
-    this.addEventListener('click', rewriteInternalLink)
+  connectedCallback () {
     this.process(this.textContent)
-  }
-
-  disconnectedCallback () {
-    this.removeEventListener('click', rewriteInternalLink)
   }
 
   get (element) {
