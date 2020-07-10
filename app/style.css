@@ -81,7 +81,6 @@ body > header {
 
   background-color: var(--bg-color);
   border-bottom: 1px solid;
-  padding-block-start: 1em;
   position: sticky;
   top: 0;
   z-index: 1;
