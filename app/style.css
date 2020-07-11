@@ -127,7 +127,7 @@ main[content-type="text/html"] {
 main.feed {
   align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
-  grid-column-gap: 2em;
+  grid-column-gap: 3em;
   grid-row-gap: 3em;
   padding-block-start: 2em;
 }
@@ -163,8 +163,6 @@ article > * {
 
 article header {
   --bg-color: var(--theme-color);
-  border: 1px solid;
-  border-inline: none;
   display: flex;
   align-items: center;
   padding-block-start: .62em;
@@ -229,7 +227,7 @@ article .content:hover {
 
 article nav {
   --bg-color: var(--theme-color);
-  border-inline: none;
+  border: none;
   padding: 0;
   width: 100%;
 }

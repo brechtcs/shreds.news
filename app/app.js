@@ -1,3 +1,4 @@
+import { Masonry } from './masonry.js'
 import { article, link } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
@@ -20,6 +21,7 @@ document.addEventListener('click', e => {
 
 class ShredsApp extends HTMLElement {
   connectedCallback () {
+    this.masonry = Masonry.init(this)
     this.process(this.textContent)
   }
 
