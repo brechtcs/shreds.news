@@ -21,14 +21,14 @@ export class Masonry {
       var rowHeight = Number(heights[Math.floor(i / columns)].replace(/px$/, ''))
       var itemHeight = Number(getComputedStyle(item).height.replace(/px$/, ''))
       item.dataset.freeHeight = rowHeight - itemHeight
-      item.classList.add('column-' + i % columns)
+      item.dataset.column = i % columns
       this.resizer.observe(item)
     })
 
     for (var column = 0; column < columns; column++) {
       var moveUp = 0
 
-      for (var row of document.querySelectorAll('.column-' + column)) {
+      for (var row of document.querySelectorAll(`[data-column="${column}"]`)) {
         row.style.setProperty('position', 'relative')
         row.style.setProperty('top', `-${moveUp}px`)
         moveUp += Number(row.dataset.freeHeight)
