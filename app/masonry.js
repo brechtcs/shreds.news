@@ -7,7 +7,7 @@ export class Masonry {
 
   constructor (grid) {
     this.grid = grid
-    this.resizer = new ResizeObserver(() => {
+    this.resizer = new Resizer(() => {
       this.reposition()
     })
   }
@@ -34,5 +34,20 @@ export class Masonry {
         moveUp += Number(row.dataset.freeHeight)
       }
     }
+  }
+}
+
+class Resizer {
+  constructor (cb) {
+    if ('ResizeObserver' in window) {
+      this.observer = new ResizeObserver(cb)
+    } else {
+      addEventListener('resize', () => cb())
+      setTimeout(cb)
+    }
+  }
+
+  observe (el) {
+    if (this.observer) this.observer.observe(el)
   }
 }
