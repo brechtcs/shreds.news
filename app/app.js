@@ -13,7 +13,14 @@ document.addEventListener('click', e => {
     return node
   })(e.target)
 
-  if (a && a.host === 'shreds.news') {
+  if (a == null) {
+    return
+  }
+
+  if (a.href === location.href) {
+    e.preventDefault()
+    app.refresh()
+  } else if (a.host === 'shreds.news') {
     a.protocol = location.protocol
     a.host = location.host
   }
@@ -43,6 +50,18 @@ class ShredsApp extends HTMLElement {
     }
 
     this.classList.add('ready')
+  }
+
+  async refresh () {
+    var endpoint = new URL(location)
+    endpoint.searchParams.set('type', 'json')
+
+    var res = await fetch(endpoint)
+    var data = await res.json()
+    data.forEach(tweeter => this.insert(tweeter))
+
+    document.body.scrollIntoView()
+    this.masonry.reposition()
   }
 
   insert (account) {
@@ -88,6 +107,7 @@ class ShredsHeader extends HTMLElement {
         nav.append(link('/login', 'Sign In'))
         break
       case '/home':
+        nav.append(link('/home', 'Refresh'))
         nav.append(link('/logout', 'Sign Out'))
         break
     }

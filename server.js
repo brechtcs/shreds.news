@@ -73,14 +73,21 @@ app.get('/', (req, res, next) => {
 })
 
 app.get('/home', async (req, res) => {
-  if (req.user) {
-    var data = await get(req.user, 'friends/list', { count: 200 })
-    var page = render('application/json', JSON.stringify(data.users))
-    res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end(page)
-  } else {
+  if (!req.user) {
     res.writeHead(302, { 'Location': '/' })
     res.end()
+  }
+
+  var data = await get(req.user, 'friends/list', { count: 200 })
+  var json = JSON.stringify(data.users)
+
+  if (req.query.type === 'json') {
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(json)
+  } else {
+    var page = render('application/json', json)
+    res.writeHead(200, { 'Content-Type': 'text/html' })
+    res.end(page)
   }
 })
 
