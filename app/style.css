@@ -11,6 +11,8 @@ body {
   background-color: var(--bg-color);
   color: var(--fg-color);
   fill: currentColor;
+  margin: 0 auto;
+  max-width: 81em;
   padding: 1em;
 }
 
