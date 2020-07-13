@@ -5,6 +5,8 @@
   --bg-img: none;
   --hover-effect: background-color .38s linear, color .24s linear, fill .24s linear;
   --shred-edges: polygon(2% 0%, 4% 7%, 0% 21%, 6% 38%, 0% 62%, 5% 59%, 0% 74%, 4% 95%, 0% 100%, 100% 100%, 96% 78%, 100% 74%, 99% 54%, 94% 57%, 99% 42%, 98% 25%, 98% 15%, 93% 9%, 97% 4%, 90% 0%);
+
+  scroll-behavior: smooth;
 }
 
 body {
@@ -255,6 +257,15 @@ article nav {
 }
 .thumb img {
   border-radius: 9999px;
+}
+
+.fade {
+  animation: 3.14s fade;
+}
+
+@keyframes fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes scan {

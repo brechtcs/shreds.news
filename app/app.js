@@ -60,13 +60,17 @@ class ShredsApp extends HTMLElement {
     var data = await res.json()
     data.forEach(tweeter => this.insert(tweeter))
 
-    document.body.scrollIntoView()
     this.masonry.reposition()
+    this.scrollIntoView()
   }
 
   insert (account) {
     if (this.drop(account.status)) return
+    if (account.screen_name in window) {
+      window[account.screen_name].remove()
+    }
 
+    var append = true
     var element = article(account)
     var date = new Date(account.status.created_at)
     this.state.accounts.set(element, account)
@@ -76,11 +80,14 @@ class ShredsApp extends HTMLElement {
       var ts = sibling.getAttribute('data-created')
 
       if (date > new Date(ts)) {
-        return this.insertBefore(element, sibling)
+        this.insertBefore(element, sibling)
+        append = false
+        break
       }
     }
 
-    this.append(element)
+    if (append) this.append(element)
+    element.classList.add('fade')
   }
 
   drop (status) {
