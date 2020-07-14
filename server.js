@@ -1,13 +1,11 @@
 var { Strategy } = require('passport-twitter')
-var { get } = require('./lib/twitter')
+var { getData, getHome } = require('./lib/twitter')
 var { join } = require('path')
-var MarkdownIt = require('markdown-it')
 var env = require('./env')
 var fs = require('fs')
 var morgan = require('morgan')
 var passport = require('passport')
 var polka = require('polka')
-var promise = require('await-callback')
 var render = require('./lib/render')
 var session = require('express-session')
 var static = require('serve-static')
@@ -39,7 +37,6 @@ passport.deserializeUser((obj, cb) => {
 	return cb(null, obj)
 })
 
-var md = new MarkdownIt()
 var app = polka({
   onError: (err, req, res) => {
     res.writeHead(err.code, { 'Content-Type': 'text/html' })
@@ -66,10 +63,9 @@ app.get('/login/callback', passport.authenticate('twitter', {
 })
 
 app.get('/', (req, res, next) => {
-  fs.readFile('./README.md', 'utf8', function (err, readme) {
-    var content = md.render(readme)
+  fs.readFile(README, 'utf8', function (err, markdown) {
     res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end(render(content, ''))
+    res.end(render({ markdown }))
   })
 })
 
@@ -79,16 +75,13 @@ app.get('/home', async (req, res) => {
     res.end()
   }
 
-  var data = await get(req.user, 'friends/list', { count: 200 })
-  var json = JSON.stringify(data.users)
-  var readme = await promise(done => fs.readFile(README, 'utf8', done))
-  var detail = md.render(readme)
-
-  if (req.query.type === 'json') {
+  if (req.query.format === 'json') {
+    var data = await getData(req.user, req.query)
     res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(json)
+    res.end(JSON.stringify(data))
   } else {
-    var page = render(detail, json)
+    var data = await getHome(req.user)
+    var page = render(data)
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(page)
   }

@@ -26,6 +26,24 @@ document.addEventListener('click', e => {
   }
 })
 
+class ShredsDetail extends HTMLElement {
+  connectedCallback () {
+    this.render(this.textContent)
+  }
+
+  render (data) {
+    switch (this.dataset.type) {
+      case 'user':
+        this.data = JSON.parse(data)
+        this.innerText = ''
+        this.append(article(this.data))
+        break
+    }
+
+    this.classList.add('ready')
+  }
+}
+
 class ShredsFeed extends HTMLElement {
   connectedCallback () {
     this.accounts = new WeakMap()
@@ -51,7 +69,8 @@ class ShredsFeed extends HTMLElement {
 
   async refresh () {
     var endpoint = new URL(location)
-    endpoint.searchParams.set('type', 'json')
+    endpoint.searchParams.set('format', 'json')
+    endpoint.searchParams.set('data', 'feed')
 
     var res = await fetch(endpoint)
     var data = await res.json()
@@ -115,5 +134,6 @@ class ShredsHeader extends HTMLElement {
   }
 }
 
+customElements.define('shreds-detail', ShredsDetail, { extends: 'section' })
 customElements.define('shreds-feed', ShredsFeed, { extends: 'section' })
 customElements.define('shreds-header', ShredsHeader, { extends: 'header' })

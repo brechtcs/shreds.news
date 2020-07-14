@@ -116,6 +116,16 @@ main > * {
   padding-block-start: 2em;
 }
 
+#detail {
+  border-bottom: 1px solid;
+  padding-block-end: 2em;
+}
+#detail[data-type] {
+  display: none;
+}
+#detail[data-type].ready {
+  display: block;
+}
 #detail > *:first-child {
   margin-block-start: 0;
 }
@@ -149,8 +159,12 @@ main > * {
   }
 
   #detail {
+    border-bottom: none;
     position: sticky;
     top: 0;
+  }
+  #detail article {
+    margin: 0;
   }
 
   #feed {
@@ -164,6 +178,8 @@ article {
   clip-path: var(--shred-edges);
   color: var(--fg-color);
   filter: opacity(80%) grayscale(85%);
+  margin: 0 auto;
+  max-width: 19em;
   min-height: 7em;
   overflow: hidden;
   transition: filter 3.14s ease;
