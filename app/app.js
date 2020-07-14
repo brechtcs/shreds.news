@@ -1,5 +1,5 @@
 import { Masonry } from './masonry.js'
-import { article, link } from './elements.js'
+import { article, link, refresh } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
 document.addEventListener('click', e => {
@@ -17,36 +17,33 @@ document.addEventListener('click', e => {
     return
   }
 
-  if (a.href === location.href) {
+  if (a.hash === '#feed') {
     e.preventDefault()
-    app.refresh()
+    feed.refresh()
   } else if (a.host === 'shreds.news') {
     a.protocol = location.protocol
     a.host = location.host
   }
 })
 
-class ShredsApp extends HTMLElement {
+class ShredsFeed extends HTMLElement {
   connectedCallback () {
+    this.accounts = new WeakMap()
+    this.statuses = new Set()
     this.masonry = Masonry.init(this)
     this.process(this.textContent)
   }
 
   get (element) {
-    return this.state.accounts.get(element)
+    return this.accounts.get(element)
   }
 
   process (data) {
-    if (this.contentType === 'application/json') {
+    if (data) {
       this.innerText = ''
-      this.classList.add('feed')
-
-      this.state = {
-        accounts: new WeakMap(),
-        statuses: new Set()
-      }
 
       JSON.parse(data).forEach(acc => this.insert(acc))
+      this.append(refresh('#feed'))
     }
 
     this.classList.add('ready')
@@ -60,8 +57,8 @@ class ShredsApp extends HTMLElement {
     var data = await res.json()
     data.forEach(tweeter => this.insert(tweeter))
 
+    this.firstChild.scrollIntoView()
     this.masonry.reposition()
-    this.scrollIntoView()
   }
 
   insert (account) {
@@ -73,8 +70,8 @@ class ShredsApp extends HTMLElement {
     var append = true
     var element = article(account)
     var date = new Date(account.status.created_at)
-    this.state.accounts.set(element, account)
-    this.state.statuses.add(account.status.id_str)
+    this.accounts.set(element, account)
+    this.statuses.add(account.status.id_str)
 
     for (var sibling of this.children) {
       var ts = sibling.getAttribute('data-created')
@@ -92,16 +89,8 @@ class ShredsApp extends HTMLElement {
 
   drop (status) {
     return status == null
-      || this.state.statuses.has(status.id_str) // already rendered
+      || this.statuses.has(status.id_str) // already rendered
       || status.retweeted_status && !status.entities.user_mentions[0] // Invalid retweet
-  }
-
-  get contentType () {
-    return this.getAttribute('content-type')
-  }
-
-  set contentType (type) {
-    return this.setAttribute('content-type', type)
   }
 }
 
@@ -114,7 +103,6 @@ class ShredsHeader extends HTMLElement {
         nav.append(link('/login', 'Sign In'))
         break
       case '/home':
-        nav.append(link('/home', 'Refresh'))
         nav.append(link('/logout', 'Sign Out'))
         break
     }
@@ -127,5 +115,5 @@ class ShredsHeader extends HTMLElement {
   }
 }
 
-customElements.define('shreds-app', ShredsApp, { extends: 'main' })
+customElements.define('shreds-feed', ShredsFeed, { extends: 'section' })
 customElements.define('shreds-header', ShredsHeader, { extends: 'header' })

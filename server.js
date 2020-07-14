@@ -7,6 +7,7 @@ var fs = require('fs')
 var morgan = require('morgan')
 var passport = require('passport')
 var polka = require('polka')
+var promise = require('await-callback')
 var render = require('./lib/render')
 var session = require('express-session')
 var static = require('serve-static')
@@ -68,7 +69,7 @@ app.get('/', (req, res, next) => {
   fs.readFile('./README.md', 'utf8', function (err, readme) {
     var content = md.render(readme)
     res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end(render('text/html', content))
+    res.end(render(content, ''))
   })
 })
 
@@ -80,12 +81,14 @@ app.get('/home', async (req, res) => {
 
   var data = await get(req.user, 'friends/list', { count: 200 })
   var json = JSON.stringify(data.users)
+  var readme = await promise(done => fs.readFile(README, 'utf8', done))
+  var detail = md.render(readme)
 
   if (req.query.type === 'json') {
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(json)
   } else {
-    var page = render('application/json', json)
+    var page = render(detail, json)
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(page)
   }

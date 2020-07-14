@@ -9,6 +9,12 @@ export function link (href, content) {
   return crel('a', { href }, content)
 }
 
+export function refresh (href) {
+  return crel('nav', { class: 'refresh' },
+    link(href, 'Refresh')
+  )
+}
+
 export function article (user) {
   var el = crel('article')
   var classes = localStorage.getItem(user.screen_name) || ''
