@@ -15,20 +15,19 @@ export function refresh (href) {
   )
 }
 
-export function article (user) {
+export function article (user, id) {
   var el = crel('article')
   var classes = localStorage.getItem(user.screen_name) || ''
   var bg = user.profile_banner_url || user.profile_background_image_url
   var status = user.status.retweeted_status || user.status
 
-  el.setAttribute('id', user.screen_name)
+  if (id) el.setAttribute('id', id)
   el.setAttribute('class', classes)
   el.setAttribute('data-created', user.status.created_at)
   el.style.setProperty('--bg-img', `url(${bg})`)
   el.style.setProperty('--theme-color', `#${user.profile_link_color}`)
   el.append(header(user))
   el.append(content(user.status, user))
-  el.append(nav(status, user))
   return el
 }
 
@@ -61,31 +60,36 @@ function thumb (user) {
 }
 
 function address (status, user) {
-  var rt = !!status.retweeted_status
+  var addr = crel('aside')
+  var rt = status.retweeted_status
+  var to = status.in_reply_to_status_id
   var mentions = status.entities.user_mentions
 
-  if (!rt && mentions.length === 0) {
-    return null
+  if (rt) {
+    addr.append(icon('retweet'))
+    addr.append(crel('address', mentions[0] && mentions[0].name))
+    addr.append(stamp(rt.created_at))
+  } else if (mentions.length) {
+    addr.append(icon('mentions'))
+    addr.append(crel('address', mentions.map(m => m.name).join(', ')))
+  } else if (to) {
+    addr.append(icon('thread'))
+    addr.append(crel('address', user.name))
   }
 
-  var names = status.in_reply_to_status_id
-    ? mentions.map(m => m.name).join(', ')
-    : mentions[0].name
-
-  return crel('aside',
-    icon(rt ? 'retweet' : names ? 'reply' : 'thread'),
-    crel('address', names || referral(status, user, 'Click to read thread')),
-    rt ? stamp(status.retweeted_status.created_at) : null
-  )
+  return addr
 }
 
 function content (status, user) {
-  var tweet = referral(status, user, address(status, user) || '')
+  var addr = address(status, user)
+  status = status.retweeted_status || status
+
+  var tweet = referral(status, user, addr || '')
   tweet.classList.add('content')
 
-  status = status.retweeted_status || status
   var cursor = status.display_text_range[0]
   var end = status.display_text_range[1]
+  var media = status.extended_entities && status.extended_entities.media
 
   status.entities.urls.forEach(url => {
     tweet.append(status.full_text.substring(cursor, url.indices[0]))
@@ -95,6 +99,11 @@ function content (status, user) {
 
   if (cursor < end) {
     tweet.append(text(status.full_text.substring(cursor, end)))
+  }
+
+  if (media) {
+    var links = media.map(m => link(m.media_url_https, m.display_url + '\n'))
+    tweet.append(crel('ul', links.map(a => crel('li', a))))
   }
 
   return tweet

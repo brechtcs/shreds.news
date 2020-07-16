@@ -80,7 +80,7 @@ app.get('/home', async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify(data))
   } else {
-    var data = await getHome(req.user)
+    var data = await getHome(req.user, req.query)
     var page = render(data)
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(page)

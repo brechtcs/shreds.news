@@ -4,6 +4,7 @@
   --bg-color: #222;
   --bg-img: none;
   --column-gap: 3em;
+  --row-gap: 3em;
   --hover-effect: background-color .38s linear, color .24s linear, fill .24s linear;
   --shred-edges: polygon(2% 0%, 4% 7%, 0% 21%, 6% 38%, 0% 62%, 5% 59%, 0% 74%, 4% 95%, 0% 100%, 100% 100%, 96% 78%, 100% 74%, 99% 54%, 94% 57%, 99% 42%, 98% 25%, 98% 15%, 93% 9%, 97% 4%, 90% 0%);
 }
@@ -126,6 +127,9 @@ main > * {
 #detail[data-type].ready {
   display: block;
 }
+#detail > * + * {
+  margin-block-start: var(--row-gap);
+}
 #detail > *:first-child {
   margin-block-start: 0;
 }
@@ -140,12 +144,14 @@ main > * {
   align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
   grid-column-gap: var(--column-gap);
-  grid-row-gap: 3em;
+  grid-row-gap: var(--row-gap);
 }
 #feed > article {
   display: inline-block;
   width: 100%;
 }
+
+#detail > article:first-child,
 #feed > article:first-child {
   scroll-margin-block-start: 2em;
 }
@@ -153,7 +159,7 @@ main > * {
 @media screen and (min-width: 49em) {
   main {
     display: grid;
-    align-items: start;
+    align-items: end;
     grid-template-columns: minmax(14em, 23em) 1fr;
     grid-column-gap: var(--column-gap);
   }
@@ -161,10 +167,11 @@ main > * {
   #detail {
     border-bottom: none;
     position: sticky;
-    top: 0;
+    bottom: 0;
+    min-height: calc(100vh - 4em);
   }
   #detail article {
-    margin: 0;
+    margin-inline: 0;
   }
 
   #feed {
@@ -177,17 +184,18 @@ article {
   background-color: var(--bg-color);
   clip-path: var(--shred-edges);
   color: var(--fg-color);
-  filter: opacity(80%) grayscale(85%);
+  filter: grayscale(85%);
   margin: 0 auto;
-  max-width: 19em;
+  max-width: 21em;
   min-height: 7em;
   overflow: hidden;
   transition: filter 3.14s ease;
   white-space: pre-wrap;
 }
 article:hover {
-  filter: opacity(90%) grayscale(0%);
+  filter: grayscale(0%);
 }
+#detail article.spotlight,
 article.spotlight,
 article.spotlight:hover,
 article:target {
@@ -262,6 +270,16 @@ article .content {
 }
 article .content:hover {
   transition: color 1s;
+}
+
+article ul {
+  list-style: none;
+  overflow: hidden;
+  padding: 0;
+  white-space: nowrap;
+}
+article ul:last-child {
+  margin-block-end: 0;
 }
 
 article nav {

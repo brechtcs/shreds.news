@@ -2,9 +2,23 @@ import { Masonry } from './masonry.js'
 import { article, link, refresh } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
-document.addEventListener('click', e => {
+function navigate (e, url) {
+  e.preventDefault()
+
+  if (url.hash === '#feed')
+    feed.refresh()
+  else if (url.search)
+    detail.load(url)
+}
+
+window.addEventListener('popstate', e => {
+  navigate(e, e.target.location)
+})
+
+window.addEventListener('click', e => {
   if (e.defaultPrevented) return
 
+  var mod = e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
   var a = (function traverse (node) {
     if (!node || node === document) return
     if (node.localName !== 'a' || node.href === undefined) {
@@ -17,10 +31,19 @@ document.addEventListener('click', e => {
     return
   }
 
-  if (a.hash === '#feed') {
-    e.preventDefault()
-    feed.refresh()
-  } else if (a.host === 'shreds.news') {
+  if (a.host === 'twitter.com' && !mod) {
+    var parts = a.pathname.split('/')
+    
+    if (parts[2] === 'status' && parts[3]) {
+      var target = new URL('?data=thread&id=' + parts[3], location)
+      history.pushState(null, null, target)
+      return navigate(e, target)
+    }
+  } else if (a.origin === location.origin && !mod) {
+    return navigate(e, a)
+  }
+
+  if (a.host === 'shreds.news') {
     a.protocol = location.protocol
     a.host = location.host
   }
@@ -31,8 +54,36 @@ class ShredsDetail extends HTMLElement {
     this.render(this.textContent)
   }
 
-  render (data) {
-    switch (this.dataset.type) {
+  scrollIntoView () {
+    if (this.bounding.bottom < 0)
+      this.lastChild.scrollIntoView(false)
+  }
+
+  async load (url) {
+    var endpoint = new URL(url)
+    endpoint.searchParams.set('format', 'json')
+
+    var res = await fetch(endpoint)
+    var data = await res.text()
+
+    this.render(data, endpoint.searchParams.get('data'))
+    this.scrollIntoView()
+  }
+
+  render (data, type) {
+    if (type)
+      this.type = type
+
+    switch (this.type) {
+      case 'thread':
+        this.data = JSON.parse(data)
+        this.innerText = ''
+
+        this.data.forEach(status => {
+          var user = Object.assign({ status }, status.user)
+          this.append(article(user))
+        })
+        break
       case 'user':
         this.data = JSON.parse(data)
         this.innerText = ''
@@ -42,6 +93,18 @@ class ShredsDetail extends HTMLElement {
 
     this.classList.add('ready')
   }
+
+  get bounding () {
+    return this.getBoundingClientRect()
+  }
+
+  get type () {
+    return this.dataset.type
+  }
+
+  set type (type) {
+    this.dataset.type = type
+  }
 }
 
 class ShredsFeed extends HTMLElement {
@@ -50,6 +113,11 @@ class ShredsFeed extends HTMLElement {
     this.statuses = new Set()
     this.masonry = Masonry.init(this)
     this.process(this.textContent)
+  }
+
+  scrollIntoView() {
+    if (this.bounding.top < 0)
+      this.firstChild.scrollIntoView()
   }
 
   get (element) {
@@ -76,8 +144,8 @@ class ShredsFeed extends HTMLElement {
     var data = await res.json()
     data.forEach(tweeter => this.insert(tweeter))
 
-    this.firstChild.scrollIntoView()
     this.masonry.reposition()
+    this.scrollIntoView()
   }
 
   insert (account) {
@@ -87,7 +155,7 @@ class ShredsFeed extends HTMLElement {
     }
 
     var append = true
-    var element = article(account)
+    var element = article(account, account.screen_name)
     var date = new Date(account.status.created_at)
     this.accounts.set(element, account)
     this.statuses.add(account.status.id_str)
@@ -110,6 +178,10 @@ class ShredsFeed extends HTMLElement {
     return status == null
       || this.statuses.has(status.id_str) // already rendered
       || status.retweeted_status && !status.entities.user_mentions[0] // Invalid retweet
+  }
+
+  get bounding () {
+    return this.getBoundingClientRect()
   }
 }
 
