@@ -127,7 +127,7 @@ main > * {
 #detail[data-type].ready {
   display: block;
 }
-#detail > * + * {
+#detail > article + article {
   margin-block-start: var(--row-gap);
 }
 #detail > *:first-child {
