@@ -1,5 +1,5 @@
 import { Masonry } from './masonry.js'
-import { article, link, refresh } from './elements.js'
+import { article, link, refresh, back } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
 function navigate (e, url) {
@@ -56,8 +56,7 @@ class ShredsDetail extends HTMLElement {
   }
 
   scrollIntoView () {
-    if (this.bounding.bottom < 0)
-      this.lastChild.scrollIntoView(false)
+    window.feed.scrollIntoView()
   }
 
   async load (url) {
@@ -92,11 +91,17 @@ class ShredsDetail extends HTMLElement {
         break
     }
 
+    this.append(back(this.handle))
     this.classList.add('ready')
   }
 
   get bounding () {
     return this.getBoundingClientRect()
+  }
+
+  get handle () {
+    var last = this.data[this.data.length - 1]
+    return last ? last.user.screen_name : null
   }
 
   get type () {

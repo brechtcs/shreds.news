@@ -15,6 +15,23 @@ export function refresh (href) {
   )
 }
 
+export function back (id) {
+  if (id == null) 
+    return crel('nav')
+
+  var anchor = link('#', 'Back')
+
+  anchor.addEventListener('click', event => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    window.history.pushState({}, null, '#' + id)
+    window[id].scrollIntoView()
+  })
+
+  return crel('nav', anchor)
+}
+
 export function article (user, id) {
   var el = crel('article')
   var classes = localStorage.getItem(user.screen_name) || ''

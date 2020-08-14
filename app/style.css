@@ -133,6 +133,11 @@ main > * {
 #detail > *:first-child {
   margin-block-start: 0;
 }
+#detail nav {
+  margin-block-start: 1.62em;
+  position: sticky;
+  bottom: .5em;
+}
 
 #feed {
   display: none;
