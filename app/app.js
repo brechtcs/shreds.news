@@ -3,12 +3,13 @@ import { article, link, refresh } from './elements.js'
 import crel from 'https://unpkg.com/crelt@1.x/index.es.js'
 
 function navigate (e, url) {
-  e.preventDefault()
-
   if (url.hash === '#feed')
     feed.refresh()
   else if (url.search)
     detail.load(url)
+  else return
+
+  e.preventDefault()
 }
 
 window.addEventListener('popstate', e => {
